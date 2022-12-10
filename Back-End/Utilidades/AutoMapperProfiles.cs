@@ -69,6 +69,13 @@ namespace PeliculasApi.Utilidades
             return resultado;
         }
 
+        
+        /// <summary>
+        /// Mapea peliculas generos
+        /// </summary>
+        /// <param name="peliculaCreacionDTO"></param>
+        /// <param name="pelicula"></param>
+        /// <returns></returns>
         private List<PeliculasGeneros> MapearPeliculasGeneros(PeliculaCreacionDTO peliculaCreacionDTO,
             Pelicula pelicula)
         {

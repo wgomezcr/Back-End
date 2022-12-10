@@ -13,14 +13,14 @@ namespace PeliculasApi.Controllers
 {
     [Route("api/actores")]
     [ApiController]
-    public class ActoresController: ControllerBase
+    public class ActoresController : ControllerBase
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IAlmacenadorArchivos almacenadorArchivos;
         private readonly string contenedor = "actores";
 
-        public ActoresController(ApplicationDbContext context, 
+        public ActoresController(ApplicationDbContext context,
             IMapper mapper,
             IAlmacenadorArchivos almacenadorArchivos
             )
@@ -30,7 +30,7 @@ namespace PeliculasApi.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-        
+
         /// <summary>
         /// Paginacion para el webAPI de los actores
         /// </summary>
@@ -45,10 +45,9 @@ namespace PeliculasApi.Controllers
 
             return mapper.Map<List<ActorDTO>>(actores);
         }
-        
-        
+
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ActorDTO>> Get (int id)
+        public async Task<ActionResult<ActorDTO>> Get(int id)
         {
             var actor = await context.Actores.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -66,9 +65,9 @@ namespace PeliculasApi.Controllers
         {
             var actor = mapper.Map<Actor>(actorCreacionDTO);
 
-            if(actorCreacionDTO.Foto != null)
+            if (actorCreacionDTO.Foto != null)
             {
-               actor.Foto = await almacenadorArchivos.GuardarArchivo(contenedor, actorCreacionDTO.Foto);
+                actor.Foto = await almacenadorArchivos.GuardarArchivo(contenedor, actorCreacionDTO.Foto);
             }
 
             context.Add(actor);
@@ -77,8 +76,25 @@ namespace PeliculasApi.Controllers
 
         }
 
+
+        /// <summary>
+        /// Atributo frombody indica el origen de donde viene la variable nombre
+        /// </summary>
+        /// <param name="nombre"></param>
+        /// <returns></returns>
+        [HttpPost("buscarPorNombre")]
+        public async Task<ActionResult<List<PeliculaActorDTO>>> BuscarPorNombre([FromBody] string nombre)
+        {
+            if (string.IsNullOrEmpty(nombre)) { return new List<PeliculaActorDTO>(); }
+            return await context.Actores
+                .Where(x => x.Nombre.Contains(nombre))
+                .Select(x => new PeliculaActorDTO { Id = x.Id, Nombre = x.Nombre, Foto = x.Foto })
+                .Take(5)
+                .ToListAsync();
+        }
+
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id,[FromForm] ActorCreacionDTO actorCreacionDTO)
+        public async Task<ActionResult> Put(int id, [FromForm] ActorCreacionDTO actorCreacionDTO)
         {
             var actor = await context.Actores.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -97,7 +113,6 @@ namespace PeliculasApi.Controllers
             await context.SaveChangesAsync();
             return NoContent();
         }
-
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
