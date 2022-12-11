@@ -69,9 +69,13 @@ namespace PeliculasApi
                 var frontendURL = Configuration.GetValue<string>("frontend_url");
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins(frontendURL).AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
                     .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });//Configuracion para permitir cabecera de metodo en httpContextExtensions
                 });
+                //{
+                //    builder.WithOrigins(frontendURL).AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+                //    .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });//Configuracion para permitir cabecera de metodo en httpContextExtensions
+                //});
             });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddControllers(options =>
