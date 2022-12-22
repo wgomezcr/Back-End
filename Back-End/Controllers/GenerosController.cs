@@ -55,23 +55,31 @@ namespace PeliculasApi.Controllers
             //return new List<Genero>() { new Genero { Id = 1, Nombre = "Comedia" }};
         }
 
+        [HttpGet("todos")]
+        public async Task<ActionResult<List<GeneroDTO>>> Todos()
+        {
+            var generos = await context.Generos.ToListAsync();
+            return mapper.Map<List<GeneroDTO>>(generos);
+        }
 
-        //[HttpGet("guid")]
-        //public ActionResult<Guid> GetGUID()
-        //{
-        //    //return repositorio.ObtenerGUID();
-        //    return Ok(new
-        //    {
-        //        GUID_GenerosController = repositorio.ObtenerGUID(),
-        //        GUID_WeatherForecastController = weatherForecastController.ObtenerGUIDWeatherForecastController()
-        //    });
 
-        //}
 
-        //GUID_GenerosController = repositorio.ObtenerGUID(),
-        //        GUID_WeatherForecastController = weatherForecastController.ObtenerGUIDWeatherForecastController()
+            //[HttpGet("guid")]
+            //public ActionResult<Guid> GetGUID()
+            //{
+            //    //return repositorio.ObtenerGUID();
+            //    return Ok(new
+            //    {
+            //        GUID_GenerosController = repositorio.ObtenerGUID(),
+            //        GUID_WeatherForecastController = weatherForecastController.ObtenerGUIDWeatherForecastController()
+            //    });
 
-        [HttpGet("{Id:int}")] //api/generos/3/Walter
+            //}
+
+            //GUID_GenerosController = repositorio.ObtenerGUID(),
+            //        GUID_WeatherForecastController = weatherForecastController.ObtenerGUIDWeatherForecastController()
+
+            [HttpGet("{Id:int}")] //api/generos/3/Walter
         public async Task<ActionResult<GeneroDTO>> Get(int Id)
         {
 
