@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PeliculasApi.DTOs;
@@ -13,23 +16,29 @@ namespace PeliculasApi.Controllers
 {
     [ApiController]
     [Route("api/peliculas")]
+    //Esto sirve para proteger  todos los metodos del controlador y permite utilizar el UserManager
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class PeliculasController : ControllerBase
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IAlmacenadorArchivos almacenadorArchivos;
+        private readonly UserManager<IdentityUser> userManager;
         private readonly string contenedor = "peliculas";
 
         public PeliculasController(ApplicationDbContext context,
             IMapper mapper,
-            IAlmacenadorArchivos almacenadorArchivos)
+            IAlmacenadorArchivos almacenadorArchivos,
+            UserManager<IdentityUser> userManager)
         {
             this.context = context;
             this.mapper = mapper;
             this.almacenadorArchivos = almacenadorArchivos;
+            this.userManager = userManager;
         }
         
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<LandingPageDTO>> Get()
         {
             var top = 6;
@@ -57,6 +66,7 @@ namespace PeliculasApi.Controllers
 
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]//Ayuda a que se ignore el authorize declarado en el controller, permite a este metodo ser accesado
         public async Task<ActionResult<PeliculaDTO>> Get (int id) 
         {
             var pelicula = await context.Peliculas
@@ -65,12 +75,42 @@ namespace PeliculasApi.Controllers
                 .Include(x => x.PeliculasCines).ThenInclude(x => x.Cine)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (pelicula == null)
+            if (pelicula == null) { return NotFound(); }
+
+            var promedioVoto = 0.0;
+            var usuarioVoto = 0;
+
+            if (await context.Ratings.AnyAsync(x => x.PeliculaId == id))
             {
-                return NotFound();
+
+                //Aqui se calcula el promedio de los votos
+                promedioVoto = await context.Ratings.Where(x => x.PeliculaId == id)
+                    .AverageAsync(x => x.Puntuacion);
+                
+                //ASi se comprueba que el usuario esta autenticado
+                if (HttpContext.User.Identity.IsAuthenticated)
+                {
+                    //HttpContext me sda la infonrmacion de los claims para validaciones
+                    //Para que funcione la asignacion x.type==email se debe apagar un mapeo automatico desde el startup agregando en el public Startup(IConfiguration configuration)
+                    //la linea JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+                    var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "email").Value;
+                    var usuario = await userManager.FindByEmailAsync(email);
+                    var usuarioId = usuario.Id;
+                    var ratingDB = await context.Ratings
+                        .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.PeliculaId == id);
+
+                    if (ratingDB != null)
+                    {
+                        usuarioVoto = ratingDB.Puntuacion;
+                    }
+                }
+                
+
             }
 
             var dto = mapper.Map<PeliculaDTO>(pelicula);
+            dto.VotoUsuario = usuarioVoto;
+            dto.PromedioVoto = promedioVoto;
             dto.Actores = dto.Actores.OrderBy(x => x.Orden).ToList();
 
             return dto;
@@ -78,6 +118,7 @@ namespace PeliculasApi.Controllers
 
 
         [HttpGet("filtrar")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<PeliculaDTO>>> Filtrar([FromQuery] PeliculasFiltrarDTO peliculasFiltrarDTO)
         {
             var peliculasQueryable = context.Peliculas.AsQueryable();

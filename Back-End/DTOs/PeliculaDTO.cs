@@ -15,9 +15,9 @@ namespace PeliculasApi.DTOs
         public DateTime FechaLanzamiento { get; set; }
         public string Poster { get; set; }
         public List<GeneroDTO> Generos { get; set; }
-
         public List<PeliculaActorDTO> Actores { get; set; }
-
         public List<CineDTO> Cines { get; set; }
+        public int VotoUsuario { get; set; }
+        public double PromedioVoto { get; set; }
     }
 }
