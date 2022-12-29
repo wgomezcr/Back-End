@@ -3,11 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>PeliculasApi</RootNamespace>
+    <UserSecretsId>656cc9cf-0d8c-41c2-93ac-3cdad23b0fd7</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/fe9f0af9-934d-4707-957f-df9c6dd8e29f/resourcegroups/PeliculasAPIwaga/providers/Microsoft.Insights/components/PeliculasAPI</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.6.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.17" />

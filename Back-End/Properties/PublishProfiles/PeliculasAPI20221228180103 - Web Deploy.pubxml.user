@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA1f69PAWQuUyhpFiI10ggrAAAAAACAAAAAAAQZgAAAAEAACAAAAB2fDeaIWPW1YgcTGKWv9na5ffQP7Q9seB/PvxPVvPe7QAAAAAOgAAAAAIAACAAAACbvmJVxi1MyBdQOmi0CJNz8KyvuWTXNBxnj6LaecovbIAAAABJjSVPNBQfjodB6YZ6FUP5lBp9sHqttN6kdup2/dQZT8W4SYD15fn+DDI0p7bvmsxL/h9mZJTN+xNIvaNf0RHsS2yWgjpN7kuvMn/TGkqZBT6WOngsXjw0WsbroSOQKaTwOEVDsrArPAgY+NLzNdItZgsu+DrgjvC+QBQAxMS040AAAADgauBjPNz2lrnyxhbLLgxDTlBEB9jzsE/fObfZv1suftTwdoayCZWqYa6SdelYZ/jQIEMe4lfQt8535cRjiU/A</EncryptedPassword>
+    <History>True|2022-12-29T00:20:57.9657943Z;True|2022-12-28T18:11:53.2070704-06:00;</History>
+  </PropertyGroup>
+  <ItemGroup>
+    <EFMigrations Include="PeliculasApi.ApplicationDbContext">
+      <Value>Data Source=tcp:peliculasapidbserverw2.database.windows.net,1433%3bInitial Catalog=PeliculasAPI_db%3bUser Id=wgomezcrwaga%40peliculasapidbserverw2%3bPassword=azure#bd27122022%24</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>
